@@ -7,6 +7,7 @@ import uuid
 import threading
 import secrets
 from functools import wraps
+import openai  # 添加OpenAI库导入
 
 # 创建Flask应用
 app = Flask(__name__, static_folder='static')
@@ -24,6 +25,7 @@ SETTINGS_FILE = os.path.join(DATA_DIR, 'settings.json')
 
 # 确保数据目录存在
 os.makedirs(CASES_DIR, exist_ok=True)
+os.makedirs(DATA_DIR, exist_ok=True)
 
 # 初始化数据文件
 if not os.path.exists(TAGS_FILE):
@@ -138,7 +140,60 @@ def password_required(f):
         return f(*args, **kwargs)
     return decorated_function
 
-# 模拟AI对话
+# 使用DeepSeek API进行对话
+def get_ai_response(message, cases, settings):
+    try:
+        # 获取API设置
+        api_key = settings.get('ai', {}).get('api_key', '')
+        temperature = float(settings.get('ai', {}).get('temperature', 0.7))
+        
+        # 如果没有API密钥，返回模拟响应
+        if not api_key:
+            return simulate_ai_response(message, cases)
+        
+        # 初始化OpenAI客户端（DeepSeek使用OpenAI兼容接口）
+        client = openai.OpenAI(
+            api_key=api_key,
+            base_url="https://api.deepseek.com"
+        )
+        
+        # 准备系统提示和用户消息
+        system_prompt = """你是写春秋企业管理咨询的AI助手，专注于为企业提供专业的管理咨询建议。
+        你的回答应该专业、有深度，并结合实际案例。你可以提供战略规划、组织变革、流程优化、
+        数字化转型和人才管理等方面的建议。"""
+        
+        # 准备相关案例信息
+        case_info = ""
+        referenced_cases = []
+        
+        if cases:
+            case_info = "以下是一些可能相关的案例，你可以在回答中参考：\n"
+            for i, case in enumerate(cases[:3]):
+                case_info += f"{i+1}. {case.get('title', '')}: {case.get('description', '')}\n"
+                referenced_cases.append(case)
+        
+        # 调用DeepSeek API
+        response = client.chat.completions.create(
+            model="deepseek-chat",
+            messages=[
+                {"role": "system", "content": system_prompt + "\n" + case_info},
+                {"role": "user", "content": message}
+            ],
+            temperature=temperature,
+            stream=False
+        )
+        
+        # 返回结果
+        return {
+            "text": response.choices[0].message.content,
+            "referenced_cases": referenced_cases
+        }
+    except Exception as e:
+        print(f"AI API调用错误: {str(e)}")
+        # 出错时返回模拟响应
+        return simulate_ai_response(message, cases)
+
+# 模拟AI对话（作为备用）
 def simulate_ai_response(message, cases):
     # 模拟AI思考时间
     time.sleep(1.5)
@@ -326,8 +381,12 @@ def handle_chat():
                 case = json.load(f)
                 cases.append(case)
     
-    # 模拟AI响应
-    response = simulate_ai_response(message, cases)
+    # 获取设置
+    with open(SETTINGS_FILE, 'r') as f:
+        settings = json.load(f)
+    
+    # 调用AI响应
+    response = get_ai_response(message, cases, settings)
     
     return jsonify(response)
 

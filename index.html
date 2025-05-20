@@ -1,0 +1,1669 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>写春秋企业管理咨询 AI 应用</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.3/font/bootstrap-icons.css">
+    <style>
+        :root {
+            --primary-color: #1a365d;
+            --accent-color: #3b82f6;
+            --light-accent: #dbeafe;
+            --text-color: #1f2937;
+            --light-text: #6b7280;
+            --border-color: #e5e7eb;
+            --background-color: #f9fafb;
+            --error-color: #ef4444;
+            --success-color: #10b981;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            color: var(--text-color);
+            background-color: var(--background-color);
+        }
+        
+        .sidebar {
+            background-color: var(--primary-color);
+            color: white;
+            height: 100vh;
+            position: fixed;
+            width: 250px;
+            transition: all 0.3s;
+            z-index: 1000;
+        }
+        
+        .sidebar-header {
+            padding: 20px;
+            background-color: rgba(0, 0, 0, 0.1);
+        }
+        
+        .sidebar-header h3 {
+            margin: 0;
+            font-size: 1.5rem;
+            font-weight: 600;
+        }
+        
+        .sidebar-menu {
+            padding: 0;
+            list-style: none;
+        }
+        
+        .sidebar-menu li {
+            padding: 10px 20px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s;
+        }
+        
+        .sidebar-menu li:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+        
+        .sidebar-menu li.active {
+            background-color: var(--accent-color);
+        }
+        
+        .sidebar-menu a {
+            color: white;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+        }
+        
+        .sidebar-menu i {
+            margin-right: 10px;
+            font-size: 1.2rem;
+        }
+        
+        .main-content {
+            margin-left: 250px;
+            padding: 20px;
+            transition: all 0.3s;
+        }
+        
+        .navbar {
+            background-color: white;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+            padding: 10px 20px;
+            margin-bottom: 20px;
+        }
+        
+        .navbar-brand {
+            font-weight: 600;
+            color: var(--primary-color);
+        }
+        
+        .card {
+            border: none;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+            margin-bottom: 20px;
+        }
+        
+        .card-header {
+            background-color: white;
+            border-bottom: 1px solid var(--border-color);
+            padding: 15px 20px;
+            font-weight: 600;
+        }
+        
+        .card-body {
+            padding: 20px;
+        }
+        
+        .btn-primary {
+            background-color: var(--accent-color);
+            border-color: var(--accent-color);
+        }
+        
+        .btn-primary:hover {
+            background-color: #2563eb;
+            border-color: #2563eb;
+        }
+        
+        .form-control:focus {
+            border-color: var(--accent-color);
+            box-shadow: 0 0 0 0.25rem rgba(59, 130, 246, 0.25);
+        }
+        
+        /* 聊天界面样式 */
+        .chat-container {
+            display: flex;
+            height: calc(100vh - 140px);
+        }
+        
+        .chat-messages {
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+            margin-right: 20px;
+        }
+        
+        .chat-sidebar {
+            width: 300px;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+            overflow-y: auto;
+        }
+        
+        .message {
+            margin-bottom: 20px;
+            display: flex;
+        }
+        
+        .message-user {
+            justify-content: flex-end;
+        }
+        
+        .message-content {
+            max-width: 70%;
+            padding: 12px 16px;
+            border-radius: 8px;
+            position: relative;
+        }
+        
+        .message-ai .message-content {
+            background-color: var(--light-accent);
+            color: var(--text-color);
+            border-top-left-radius: 0;
+        }
+        
+        .message-user .message-content {
+            background-color: var(--accent-color);
+            color: white;
+            border-top-right-radius: 0;
+        }
+        
+        .message-time {
+            font-size: 0.75rem;
+            color: var(--light-text);
+            margin-top: 5px;
+            text-align: right;
+        }
+        
+        .chat-input {
+            display: flex;
+            margin-top: 20px;
+        }
+        
+        .chat-input textarea {
+            flex: 1;
+            border-radius: 8px;
+            padding: 12px;
+            resize: none;
+            height: 60px;
+        }
+        
+        .chat-input button {
+            margin-left: 10px;
+            border-radius: 8px;
+            padding: 0 20px;
+        }
+        
+        .case-card {
+            padding: 15px;
+            border-bottom: 1px solid var(--border-color);
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .case-card:hover {
+            background-color: var(--light-accent);
+        }
+        
+        .case-card h5 {
+            margin: 0 0 5px;
+            font-size: 1rem;
+            color: var(--primary-color);
+        }
+        
+        .case-card p {
+            margin: 0;
+            font-size: 0.85rem;
+            color: var(--light-text);
+        }
+        
+        .case-tags {
+            display: flex;
+            flex-wrap: wrap;
+            margin-top: 8px;
+        }
+        
+        .case-tag {
+            font-size: 0.75rem;
+            padding: 2px 8px;
+            background-color: var(--light-accent);
+            color: var(--accent-color);
+            border-radius: 4px;
+            margin-right: 5px;
+            margin-bottom: 5px;
+        }
+        
+        /* 案例库样式 */
+        .case-library {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+        }
+        
+        .case-library-card {
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+            overflow: hidden;
+            transition: all 0.3s;
+        }
+        
+        .case-library-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .case-library-header {
+            padding: 15px;
+            border-bottom: 1px solid var(--border-color);
+        }
+        
+        .case-library-header h4 {
+            margin: 0;
+            font-size: 1.1rem;
+            color: var(--primary-color);
+        }
+        
+        .case-library-body {
+            padding: 15px;
+        }
+        
+        .case-library-description {
+            color: var(--light-text);
+            margin-bottom: 15px;
+            font-size: 0.9rem;
+        }
+        
+        .case-library-footer {
+            padding: 15px;
+            border-top: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .case-library-date {
+            font-size: 0.8rem;
+            color: var(--light-text);
+        }
+        
+        /* 上传案例样式 */
+        .upload-area {
+            border: 2px dashed var(--border-color);
+            border-radius: 8px;
+            padding: 40px;
+            text-align: center;
+            margin-bottom: 20px;
+            transition: all 0.3s;
+        }
+        
+        .upload-area:hover {
+            border-color: var(--accent-color);
+        }
+        
+        .upload-icon {
+            font-size: 3rem;
+            color: var(--accent-color);
+            margin-bottom: 15px;
+        }
+        
+        .upload-text {
+            color: var(--light-text);
+            margin-bottom: 15px;
+        }
+        
+        /* 标签管理样式 */
+        .tag-container {
+            display: grid;
+            grid-template-columns: 1fr 2fr;
+            gap: 20px;
+        }
+        
+        .tag-form {
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+            padding: 20px;
+        }
+        
+        .tag-list {
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+            padding: 20px;
+        }
+        
+        .tag-category {
+            margin-bottom: 20px;
+        }
+        
+        .tag-category h5 {
+            margin-top: 0;
+            margin-bottom: 10px;
+            padding-bottom: 5px;
+            border-bottom: 1px solid var(--border-color);
+            color: var(--primary-color);
+        }
+        
+        .tag-items {
+            display: flex;
+            flex-wrap: wrap;
+        }
+        
+        .tag-item {
+            display: flex;
+            align-items: center;
+            background-color: var(--light-accent);
+            color: var(--accent-color);
+            border-radius: 4px;
+            padding: 5px 10px;
+            margin-right: 10px;
+            margin-bottom: 10px;
+        }
+        
+        .tag-item-actions {
+            margin-left: 10px;
+            display: flex;
+        }
+        
+        .tag-item-action {
+            background: none;
+            border: none;
+            padding: 0;
+            margin-left: 5px;
+            cursor: pointer;
+            font-size: 0.8rem;
+        }
+        
+        .tag-item-edit {
+            color: var(--accent-color);
+        }
+        
+        .tag-item-delete {
+            color: var(--error-color);
+        }
+        
+        /* 设置页面样式 */
+        .settings-section {
+            margin-bottom: 30px;
+        }
+        
+        .settings-section h4 {
+            margin-top: 0;
+            margin-bottom: 15px;
+            color: var(--primary-color);
+            padding-bottom: 5px;
+            border-bottom: 1px solid var(--border-color);
+        }
+        
+        /* 响应式设计 */
+        @media (max-width: 992px) {
+            .sidebar {
+                width: 70px;
+                overflow: hidden;
+            }
+            
+            .sidebar-header h3 {
+                display: none;
+            }
+            
+            .sidebar-menu span {
+                display: none;
+            }
+            
+            .sidebar-menu i {
+                margin-right: 0;
+                font-size: 1.5rem;
+            }
+            
+            .main-content {
+                margin-left: 70px;
+            }
+            
+            .chat-container {
+                flex-direction: column;
+                height: auto;
+            }
+            
+            .chat-messages {
+                margin-right: 0;
+                margin-bottom: 20px;
+                height: 60vh;
+            }
+            
+            .chat-sidebar {
+                width: 100%;
+                height: 30vh;
+            }
+            
+            .tag-container {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        @media (max-width: 576px) {
+            .sidebar {
+                width: 100%;
+                height: auto;
+                position: relative;
+            }
+            
+            .sidebar-menu {
+                display: flex;
+                overflow-x: auto;
+            }
+            
+            .sidebar-menu li {
+                padding: 10px;
+                border-bottom: none;
+                border-right: 1px solid rgba(255, 255, 255, 0.1);
+            }
+            
+            .main-content {
+                margin-left: 0;
+            }
+            
+            .case-library {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="d-flex">
+        <!-- 侧边栏 -->
+        <div class="sidebar">
+            <div class="sidebar-header">
+                <h3>写春秋咨询</h3>
+            </div>
+            <ul class="sidebar-menu">
+                <li class="active">
+                    <a href="#" data-page="dashboard">
+                        <i class="bi bi-house-door"></i>
+                        <span>控制台</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="#" data-page="chat">
+                        <i class="bi bi-chat-dots"></i>
+                        <span>AI 对话</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="#" data-page="case-library">
+                        <i class="bi bi-journal-text"></i>
+                        <span>案例库</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="#" data-page="upload-case">
+                        <i class="bi bi-cloud-upload"></i>
+                        <span>上传案例</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="#" data-page="tag-manager">
+                        <i class="bi bi-tags"></i>
+                        <span>标签管理</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="#" data-page="settings">
+                        <i class="bi bi-gear"></i>
+                        <span>设置</span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+
+        <!-- 主内容区 -->
+        <div class="main-content">
+            <nav class="navbar">
+                <div class="container-fluid">
+                    <span class="navbar-brand">写春秋企业管理咨询 AI 应用</span>
+                </div>
+            </nav>
+
+            <!-- 控制台页面 -->
+            <div class="page-content" id="dashboard-page">
+                <div class="row mb-4">
+                    <div class="col-md-4 mb-3">
+                        <div class="card">
+                            <div class="card-body d-flex align-items-center">
+                                <div class="rounded-circle bg-primary bg-opacity-10 p-3 me-3">
+                                    <i class="bi bi-chat-dots text-primary fs-4"></i>
+                                </div>
+                                <div>
+                                    <h6 class="text-muted mb-1">AI 对话</h6>
+                                    <h4 class="mb-0" id="chat-count">0</h4>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <div class="card">
+                            <div class="card-body d-flex align-items-center">
+                                <div class="rounded-circle bg-success bg-opacity-10 p-3 me-3">
+                                    <i class="bi bi-journal-text text-success fs-4"></i>
+                                </div>
+                                <div>
+                                    <h6 class="text-muted mb-1">案例数量</h6>
+                                    <h4 class="mb-0" id="case-count">0</h4>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <div class="card">
+                            <div class="card-body d-flex align-items-center">
+                                <div class="rounded-circle bg-warning bg-opacity-10 p-3 me-3">
+                                    <i class="bi bi-tags text-warning fs-4"></i>
+                                </div>
+                                <div>
+                                    <h6 class="text-muted mb-1">标签数量</h6>
+                                    <h4 class="mb-0" id="tag-count">0</h4>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6 mb-4">
+                        <div class="card h-100">
+                            <div class="card-header d-flex justify-content-between align-items-center">
+                                <h5 class="mb-0">最近案例</h5>
+                                <a href="#" class="text-primary" data-page="case-library">查看全部</a>
+                            </div>
+                            <div class="card-body" id="recent-cases">
+                                <div class="text-center text-muted py-5">
+                                    <i class="bi bi-journal-text fs-1"></i>
+                                    <p class="mt-3">暂无案例</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6 mb-4">
+                        <div class="card h-100">
+                            <div class="card-header d-flex justify-content-between align-items-center">
+                                <h5 class="mb-0">快速操作</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="row g-3">
+                                    <div class="col-6">
+                                        <a href="#" class="card text-center p-4 text-decoration-none" data-page="chat">
+                                            <i class="bi bi-chat-dots text-primary fs-1 mb-3"></i>
+                                            <h5>开始对话</h5>
+                                        </a>
+                                    </div>
+                                    <div class="col-6">
+                                        <a href="#" class="card text-center p-4 text-decoration-none" data-page="upload-case">
+                                            <i class="bi bi-cloud-upload text-success fs-1 mb-3"></i>
+                                            <h5>上传案例</h5>
+                                        </a>
+                                    </div>
+                                    <div class="col-6">
+                                        <a href="#" class="card text-center p-4 text-decoration-none" data-page="case-library">
+                                            <i class="bi bi-journal-text text-warning fs-1 mb-3"></i>
+                                            <h5>浏览案例</h5>
+                                        </a>
+                                    </div>
+                                    <div class="col-6">
+                                        <a href="#" class="card text-center p-4 text-decoration-none" data-page="settings">
+                                            <i class="bi bi-gear text-secondary fs-1 mb-3"></i>
+                                            <h5>系统设置</h5>
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- AI 对话页面 -->
+            <div class="page-content d-none" id="chat-page">
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <h5 class="mb-0">AI 对话</h5>
+                    </div>
+                    <div class="card-body p-0">
+                        <div class="chat-container">
+                            <div class="chat-messages" id="chat-messages">
+                                <div class="message message-ai">
+                                    <div class="message-content">
+                                        <p>您好！我是写春秋企业管理咨询的AI助手。我可以帮助您解决企业管理中的各类问题，包括战略规划、组织变革、流程优化、数字化转型和人才管理等。请告诉我您的需求，我将为您提供专业建议。</p>
+                                        <div class="message-time">今天 12:00</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="chat-sidebar">
+                                <div class="card-header">
+                                    <h5 class="mb-0">相关案例</h5>
+                                </div>
+                                <div id="related-cases">
+                                    <div class="text-center text-muted py-5">
+                                        <i class="bi bi-journal-text fs-1"></i>
+                                        <p class="mt-3">开始对话后将显示相关案例</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="chat-input px-3 pb-3">
+                            <textarea class="form-control" id="chat-input" placeholder="输入您的问题..."></textarea>
+                            <button class="btn btn-primary" id="send-message">发送</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 案例库页面 -->
+            <div class="page-content d-none" id="case-library-page">
+                <div class="card mb-4">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0">案例库</h5>
+                        <div class="d-flex">
+                            <input type="text" class="form-control me-2" placeholder="搜索案例..." id="case-search">
+                            <select class="form-select me-2" id="tag-filter">
+                                <option value="">所有标签</option>
+                            </select>
+                            <div class="btn-group" role="group">
+                                <button type="button" class="btn btn-outline-primary active" id="grid-view">
+                                    <i class="bi bi-grid"></i>
+                                </button>
+                                <button type="button" class="btn btn-outline-primary" id="list-view">
+                                    <i class="bi bi-list-ul"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="case-library" id="case-library-container">
+                            <div class="text-center text-muted py-5">
+                                <i class="bi bi-journal-text fs-1"></i>
+                                <p class="mt-3">暂无案例</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 上传案例页面 -->
+            <div class="page-content d-none" id="upload-case-page">
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <h5 class="mb-0">上传案例</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="upload-area" id="upload-area">
+                            <div class="upload-icon">
+                                <i class="bi bi-cloud-upload"></i>
+                            </div>
+                            <div class="upload-text">
+                                拖放文件到此处，或点击选择文件
+                            </div>
+                            <button class="btn btn-primary" id="select-file">选择文件</button>
+                            <input type="file" id="file-input" class="d-none">
+                        </div>
+
+                        <form id="case-form">
+                            <div class="mb-3">
+                                <label for="case-title" class="form-label">案例标题</label>
+                                <input type="text" class="form-control" id="case-title" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="case-description" class="form-label">案例描述</label>
+                                <textarea class="form-control" id="case-description" rows="2" required></textarea>
+                            </div>
+                            <div class="mb-3">
+                                <label for="case-content" class="form-label">案例内容</label>
+                                <textarea class="form-control" id="case-content" rows="6" required></textarea>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">案例标签</label>
+                                <div class="input-group mb-2">
+                                    <select class="form-select" id="case-tags">
+                                        <option value="">选择标签...</option>
+                                    </select>
+                                    <button class="btn btn-outline-secondary" type="button" id="add-tag">添加</button>
+                                </div>
+                                <div class="case-tags" id="selected-tags"></div>
+                            </div>
+                            <button type="submit" class="btn btn-primary">上传案例</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 标签管理页面 -->
+            <div class="page-content d-none" id="tag-manager-page">
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <h5 class="mb-0">标签管理</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="tag-container">
+                            <div class="tag-form">
+                                <h5>创建标签</h5>
+                                <form id="tag-form">
+                                    <div class="mb-3">
+                                        <label for="tag-name" class="form-label">标签名称</label>
+                                        <input type="text" class="form-control" id="tag-name" required>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="tag-category" class="form-label">标签分类</label>
+                                        <select class="form-select" id="tag-category">
+                                            <option value="行业">行业</option>
+                                            <option value="规模">规模</option>
+                                            <option value="主题">主题</option>
+                                            <option value="其他">其他</option>
+                                        </select>
+                                    </div>
+                                    <button type="submit" class="btn btn-primary">创建标签</button>
+                                </form>
+                            </div>
+                            <div class="tag-list" id="tag-list">
+                                <h5>标签列表</h5>
+                                <div class="text-center text-muted py-5">
+                                    <i class="bi bi-tags fs-1"></i>
+                                    <p class="mt-3">加载中...</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 设置页面 -->
+            <div class="page-content d-none" id="settings-page">
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <h5 class="mb-0">系统设置</h5>
+                    </div>
+                    <div class="card-body">
+                        <form id="settings-form">
+                            <div class="settings-section">
+                                <h4>公司信息</h4>
+                                <div class="mb-3">
+                                    <label for="company-name" class="form-label">公司名称</label>
+                                    <input type="text" class="form-control" id="company-name" value="写春秋企业管理咨询">
+                                </div>
+                                <div class="mb-3">
+                                    <label for="company-description" class="form-label">公司描述</label>
+                                    <textarea class="form-control" id="company-description" rows="3">专注于企业战略规划与管理咨询的专业服务机构</textarea>
+                                </div>
+                            </div>
+
+                            <div class="settings-section">
+                                <h4>AI 设置</h4>
+                                <div class="mb-3">
+                                    <label for="ai-provider" class="form-label">AI 提供商</label>
+                                    <select class="form-select" id="ai-provider">
+                                        <option value="openai">OpenAI</option>
+                                        <option value="deepseek">DeepSeek</option>
+                                    </select>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="api-key" class="form-label">API 密钥</label>
+                                    <input type="password" class="form-control" id="api-key">
+                                    <div class="form-text">用于连接 AI 服务的 API 密钥</div>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="temperature" class="form-label">创造性 (Temperature)</label>
+                                    <input type="range" class="form-range" min="0" max="1" step="0.1" value="0.7" id="temperature">
+                                    <div class="d-flex justify-content-between">
+                                        <span class="form-text">精确</span>
+                                        <span class="form-text" id="temperature-value">0.7</span>
+                                        <span class="form-text">创造性</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <button type="submit" class="btn btn-primary">保存设置</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 案例详情模态框 -->
+    <div class="modal fade" id="case-detail-modal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="case-detail-title"></h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p class="text-muted" id="case-detail-description"></p>
+                    <div class="case-tags mb-3" id="case-detail-tags"></div>
+                    <hr>
+                    <div id="case-detail-content"></div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">关闭</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 编辑标签模态框 -->
+    <div class="modal fade" id="edit-tag-modal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">编辑标签</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="edit-tag-form">
+                        <input type="hidden" id="edit-tag-old-name">
+                        <input type="hidden" id="edit-tag-old-category">
+                        <div class="mb-3">
+                            <label for="edit-tag-name" class="form-label">标签名称</label>
+                            <input type="text" class="form-control" id="edit-tag-name" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="edit-tag-category" class="form-label">标签分类</label>
+                            <select class="form-select" id="edit-tag-category">
+                                <option value="行业">行业</option>
+                                <option value="规模">规模</option>
+                                <option value="主题">主题</option>
+                                <option value="其他">其他</option>
+                            </select>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
+                    <button type="button" class="btn btn-primary" id="save-edit-tag">保存</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // 初始化变量
+            let currentPage = 'dashboard';
+            let cases = [];
+            let tags = {};
+            let settings = {};
+            let chatMessages = [];
+            let selectedTags = [];
+            
+            // 模态框实例
+            const caseDetailModal = new bootstrap.Modal(document.getElementById('case-detail-modal'));
+            const editTagModal = new bootstrap.Modal(document.getElementById('edit-tag-modal'));
+            
+            // 页面导航
+            document.querySelectorAll('.sidebar-menu a').forEach(link => {
+                link.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const page = this.getAttribute('data-page');
+                    navigateTo(page);
+                });
+            });
+            
+            document.querySelectorAll('[data-page]').forEach(element => {
+                element.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const page = this.getAttribute('data-page');
+                    navigateTo(page);
+                });
+            });
+            
+            function navigateTo(page) {
+                // 隐藏所有页面
+                document.querySelectorAll('.page-content').forEach(content => {
+                    content.classList.add('d-none');
+                });
+                
+                // 显示选中页面
+                document.getElementById(`${page}-page`).classList.remove('d-none');
+                
+                // 更新侧边栏选中状态
+                document.querySelectorAll('.sidebar-menu li').forEach(item => {
+                    item.classList.remove('active');
+                });
+                
+                document.querySelector(`.sidebar-menu a[data-page="${page}"]`).parentElement.classList.add('active');
+                
+                // 更新当前页面
+                currentPage = page;
+                
+                // 页面特定初始化
+                if (page === 'dashboard') {
+                    loadDashboard();
+                } else if (page === 'case-library') {
+                    loadCaseLibrary();
+                } else if (page === 'tag-manager') {
+                    loadTagManager();
+                } else if (page === 'settings') {
+                    loadSettings();
+                }
+            }
+            
+            // API 函数
+            async function fetchAPI(endpoint, method = 'GET', data = null) {
+                const options = {
+                    method,
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                };
+                
+                if (data && (method === 'POST' || method === 'PUT')) {
+                    options.body = JSON.stringify(data);
+                }
+                
+                try {
+                    const response = await fetch(`/api/${endpoint}`, options);
+                    return await response.json();
+                } catch (error) {
+                    console.error('API Error:', error);
+                    return null;
+                }
+            }
+            
+            // 加载控制台数据
+            async function loadDashboard() {
+                // 加载案例数据
+                const casesData = await fetchAPI('cases');
+                cases = casesData || [];
+                
+                // 加载标签数据
+                const tagsData = await fetchAPI('tags');
+                tags = tagsData || { categories: {} };
+                
+                // 更新统计数据
+                document.getElementById('chat-count').textContent = chatMessages.filter(m => m.type === 'user').length;
+                document.getElementById('case-count').textContent = cases.length;
+                
+                let tagCount = 0;
+                Object.values(tags.categories || {}).forEach(categoryTags => {
+                    tagCount += categoryTags.length;
+                });
+                document.getElementById('tag-count').textContent = tagCount;
+                
+                // 更新最近案例
+                const recentCasesContainer = document.getElementById('recent-cases');
+                if (cases.length > 0) {
+                    recentCasesContainer.innerHTML = '';
+                    
+                    // 按创建时间排序并取最近3个
+                    const recentCases = [...cases].sort((a, b) => {
+                        return new Date(b.created_at) - new Date(a.created_at);
+                    }).slice(0, 3);
+                    
+                    recentCases.forEach(caseItem => {
+                        const caseElement = document.createElement('div');
+                        caseElement.className = 'case-card';
+                        caseElement.innerHTML = `
+                            <h5>${caseItem.title}</h5>
+                            <p>${caseItem.description}</p>
+                            <div class="case-tags">
+                                ${(caseItem.tags || []).slice(0, 3).map(tag => `
+                                    <span class="case-tag">${tag}</span>
+                                `).join('')}
+                                ${caseItem.tags && caseItem.tags.length > 3 ? `
+                                    <span class="case-tag more-tag">+${caseItem.tags.length - 3}</span>
+                                ` : ''}
+                            </div>
+                        `;
+                        
+                        caseElement.addEventListener('click', () => {
+                            showCaseDetail(caseItem);
+                        });
+                        
+                        recentCasesContainer.appendChild(caseElement);
+                    });
+                } else {
+                    recentCasesContainer.innerHTML = `
+                        <div class="text-center text-muted py-5">
+                            <i class="bi bi-journal-text fs-1"></i>
+                            <p class="mt-3">暂无案例</p>
+                        </div>
+                    `;
+                }
+            }
+            
+            // 加载案例库
+            async function loadCaseLibrary() {
+                // 加载案例数据
+                const casesData = await fetchAPI('cases');
+                cases = casesData || [];
+                
+                // 加载标签数据
+                const tagsData = await fetchAPI('tags');
+                tags = tagsData || { categories: {} };
+                
+                // 更新标签筛选下拉框
+                const tagFilter = document.getElementById('tag-filter');
+                tagFilter.innerHTML = '<option value="">所有标签</option>';
+                
+                let allTags = [];
+                Object.entries(tags.categories || {}).forEach(([category, categoryTags]) => {
+                    categoryTags.forEach(tag => {
+                        allTags.push(tag);
+                        const option = document.createElement('option');
+                        option.value = tag;
+                        option.textContent = tag;
+                        tagFilter.appendChild(option);
+                    });
+                });
+                
+                // 渲染案例库
+                renderCaseLibrary(cases);
+                
+                // 绑定搜索和筛选事件
+                document.getElementById('case-search').addEventListener('input', filterCases);
+                document.getElementById('tag-filter').addEventListener('change', filterCases);
+                
+                // 绑定视图切换事件
+                document.getElementById('grid-view').addEventListener('click', function() {
+                    document.getElementById('case-library-container').className = 'case-library';
+                    this.classList.add('active');
+                    document.getElementById('list-view').classList.remove('active');
+                });
+                
+                document.getElementById('list-view').addEventListener('click', function() {
+                    document.getElementById('case-library-container').className = 'list-group';
+                    this.classList.add('active');
+                    document.getElementById('grid-view').classList.remove('active');
+                });
+            }
+            
+            // 渲染案例库
+            function renderCaseLibrary(casesToRender) {
+                const container = document.getElementById('case-library-container');
+                
+                if (casesToRender.length === 0) {
+                    container.innerHTML = `
+                        <div class="text-center text-muted py-5">
+                            <i class="bi bi-journal-text fs-1"></i>
+                            <p class="mt-3">暂无案例</p>
+                        </div>
+                    `;
+                    return;
+                }
+                
+                container.innerHTML = '';
+                
+                const isGridView = document.getElementById('grid-view').classList.contains('active');
+                
+                casesToRender.forEach(caseItem => {
+                    if (isGridView) {
+                        // 网格视图
+                        const caseElement = document.createElement('div');
+                        caseElement.className = 'case-library-card';
+                        caseElement.innerHTML = `
+                            <div class="case-library-header">
+                                <h4>${caseItem.title}</h4>
+                            </div>
+                            <div class="case-library-body">
+                                <div class="case-library-description">${caseItem.description}</div>
+                                <div class="case-tags">
+                                    ${(caseItem.tags || []).slice(0, 3).map(tag => `
+                                        <span class="case-tag">${tag}</span>
+                                    `).join('')}
+                                    ${caseItem.tags && caseItem.tags.length > 3 ? `
+                                        <span class="case-tag more-tag">+${caseItem.tags.length - 3}</span>
+                                    ` : ''}
+                                </div>
+                            </div>
+                            <div class="case-library-footer">
+                                <span class="case-library-date">${formatDate(caseItem.created_at)}</span>
+                                <button class="btn btn-sm btn-primary view-case">查看</button>
+                            </div>
+                        `;
+                        
+                        caseElement.querySelector('.view-case').addEventListener('click', () => {
+                            showCaseDetail(caseItem);
+                        });
+                        
+                        container.appendChild(caseElement);
+                    } else {
+                        // 列表视图
+                        const caseElement = document.createElement('div');
+                        caseElement.className = 'list-group-item list-group-item-action';
+                        caseElement.innerHTML = `
+                            <div class="d-flex w-100 justify-content-between">
+                                <h5 class="mb-1">${caseItem.title}</h5>
+                                <small>${formatDate(caseItem.created_at)}</small>
+                            </div>
+                            <p class="mb-1">${caseItem.description}</p>
+                            <div class="case-tags">
+                                ${(caseItem.tags || []).map(tag => `
+                                    <span class="case-tag">${tag}</span>
+                                `).join('')}
+                            </div>
+                        `;
+                        
+                        caseElement.addEventListener('click', () => {
+                            showCaseDetail(caseItem);
+                        });
+                        
+                        container.appendChild(caseElement);
+                    }
+                });
+            }
+            
+            // 筛选案例
+            function filterCases() {
+                const searchTerm = document.getElementById('case-search').value.toLowerCase();
+                const tagFilter = document.getElementById('tag-filter').value;
+                
+                const filteredCases = cases.filter(caseItem => {
+                    // 搜索标题和描述
+                    const matchesSearch = searchTerm === '' || 
+                        caseItem.title.toLowerCase().includes(searchTerm) || 
+                        caseItem.description.toLowerCase().includes(searchTerm);
+                    
+                    // 标签筛选
+                    const matchesTag = tagFilter === '' || 
+                        (caseItem.tags && caseItem.tags.includes(tagFilter));
+                    
+                    return matchesSearch && matchesTag;
+                });
+                
+                renderCaseLibrary(filteredCases);
+            }
+            
+            // 显示案例详情
+            function showCaseDetail(caseItem) {
+                document.getElementById('case-detail-title').textContent = caseItem.title;
+                document.getElementById('case-detail-description').textContent = caseItem.description;
+                
+                const tagsContainer = document.getElementById('case-detail-tags');
+                tagsContainer.innerHTML = '';
+                
+                if (caseItem.tags && caseItem.tags.length > 0) {
+                    caseItem.tags.forEach(tag => {
+                        const tagElement = document.createElement('span');
+                        tagElement.className = 'case-tag';
+                        tagElement.textContent = tag;
+                        tagsContainer.appendChild(tagElement);
+                    });
+                }
+                
+                document.getElementById('case-detail-content').innerHTML = caseItem.content.replace(/\n/g, '<br>');
+                
+                caseDetailModal.show();
+            }
+            
+            // 加载标签管理
+            async function loadTagManager() {
+                // 加载标签数据
+                const tagsData = await fetchAPI('tags');
+                tags = tagsData || { categories: {} };
+                
+                // 渲染标签列表
+                renderTagList();
+                
+                // 绑定表单提交事件
+                document.getElementById('tag-form').addEventListener('submit', async function(e) {
+                    e.preventDefault();
+                    
+                    const tagName = document.getElementById('tag-name').value;
+                    const tagCategory = document.getElementById('tag-category').value;
+                    
+                    if (!tagName) return;
+                    
+                    const response = await fetchAPI('tags', 'POST', {
+                        name: tagName,
+                        category: tagCategory
+                    });
+                    
+                    if (response && response.status === 'success') {
+                        tags = response.tags;
+                        renderTagList();
+                        document.getElementById('tag-name').value = '';
+                    }
+                });
+            }
+            
+            // 渲染标签列表
+            function renderTagList() {
+                const tagList = document.getElementById('tag-list');
+                tagList.innerHTML = '<h5>标签列表</h5>';
+                
+                const categories = Object.keys(tags.categories || {});
+                
+                if (categories.length === 0) {
+                    tagList.innerHTML += `
+                        <div class="text-center text-muted py-5">
+                            <i class="bi bi-tags fs-1"></i>
+                            <p class="mt-3">暂无标签</p>
+                        </div>
+                    `;
+                    return;
+                }
+                
+                categories.forEach(category => {
+                    const categoryTags = tags.categories[category];
+                    
+                    if (categoryTags.length === 0) return;
+                    
+                    const categoryElement = document.createElement('div');
+                    categoryElement.className = 'tag-category';
+                    categoryElement.innerHTML = `
+                        <h5>${category}</h5>
+                        <div class="tag-items"></div>
+                    `;
+                    
+                    const tagItems = categoryElement.querySelector('.tag-items');
+                    
+                    categoryTags.forEach(tag => {
+                        const tagElement = document.createElement('div');
+                        tagElement.className = 'tag-item';
+                        tagElement.innerHTML = `
+                            <span class="tag-name">${tag}</span>
+                            <div class="tag-item-actions">
+                                <button class="tag-item-action tag-item-edit">
+                                    <i class="bi bi-pencil"></i>
+                                </button>
+                                <button class="tag-item-action tag-item-delete">
+                                    <i class="bi bi-trash"></i>
+                                </button>
+                            </div>
+                        `;
+                        
+                        // 编辑标签
+                        tagElement.querySelector('.tag-item-edit').addEventListener('click', () => {
+                            document.getElementById('edit-tag-old-name').value = tag;
+                            document.getElementById('edit-tag-old-category').value = category;
+                            document.getElementById('edit-tag-name').value = tag;
+                            document.getElementById('edit-tag-category').value = category;
+                            editTagModal.show();
+                        });
+                        
+                        // 删除标签
+                        tagElement.querySelector('.tag-item-delete').addEventListener('click', async () => {
+                            if (confirm(`确定要删除标签 "${tag}" 吗？`)) {
+                                const response = await fetchAPI('tags', 'DELETE', {
+                                    name: tag,
+                                    category: category
+                                });
+                                
+                                if (response && response.status === 'success') {
+                                    tags = response.tags;
+                                    renderTagList();
+                                }
+                            }
+                        });
+                        
+                        tagItems.appendChild(tagElement);
+                    });
+                    
+                    tagList.appendChild(categoryElement);
+                });
+                
+                // 绑定保存编辑标签事件
+                document.getElementById('save-edit-tag').addEventListener('click', async function() {
+                    const oldName = document.getElementById('edit-tag-old-name').value;
+                    const oldCategory = document.getElementById('edit-tag-old-category').value;
+                    const newName = document.getElementById('edit-tag-name').value;
+                    const newCategory = document.getElementById('edit-tag-category').value;
+                    
+                    if (!newName) return;
+                    
+                    const response = await fetchAPI('tags', 'PUT', {
+                        old_name: oldName,
+                        old_category: oldCategory,
+                        new_name: newName,
+                        new_category: newCategory
+                    });
+                    
+                    if (response && response.status === 'success') {
+                        tags = response.tags;
+                        renderTagList();
+                        editTagModal.hide();
+                    }
+                });
+            }
+            
+            // 加载设置
+            async function loadSettings() {
+                // 加载设置数据
+                const settingsData = await fetchAPI('settings');
+                settings = settingsData || {
+                    company: {
+                        name: '写春秋企业管理咨询',
+                        description: '专注于企业战略规划与管理咨询的专业服务机构'
+                    },
+                    ai: {
+                        provider: 'openai',
+                        api_key: '',
+                        temperature: 0.7
+                    }
+                };
+                
+                // 填充表单
+                document.getElementById('company-name').value = settings.company.name;
+                document.getElementById('company-description').value = settings.company.description;
+                document.getElementById('ai-provider').value = settings.ai.provider;
+                document.getElementById('api-key').value = settings.ai.api_key;
+                document.getElementById('temperature').value = settings.ai.temperature;
+                document.getElementById('temperature-value').textContent = settings.ai.temperature;
+                
+                // 绑定温度滑块事件
+                document.getElementById('temperature').addEventListener('input', function() {
+                    document.getElementById('temperature-value').textContent = this.value;
+                });
+                
+                // 绑定表单提交事件
+                document.getElementById('settings-form').addEventListener('submit', async function(e) {
+                    e.preventDefault();
+                    
+                    const newSettings = {
+                        company: {
+                            name: document.getElementById('company-name').value,
+                            description: document.getElementById('company-description').value
+                        },
+                        ai: {
+                            provider: document.getElementById('ai-provider').value,
+                            api_key: document.getElementById('api-key').value,
+                            temperature: parseFloat(document.getElementById('temperature').value)
+                        }
+                    };
+                    
+                    const response = await fetchAPI('settings', 'PUT', newSettings);
+                    
+                    if (response && response.status === 'success') {
+                        settings = newSettings;
+                        alert('设置已保存');
+                    }
+                });
+            }
+            
+            // 初始化上传案例页面
+            function initUploadCase() {
+                // 加载标签数据
+                fetchAPI('tags').then(tagsData => {
+                    tags = tagsData || { categories: {} };
+                    
+                    // 更新标签下拉框
+                    const tagSelect = document.getElementById('case-tags');
+                    tagSelect.innerHTML = '<option value="">选择标签...</option>';
+                    
+                    let allTags = [];
+                    Object.entries(tags.categories || {}).forEach(([category, categoryTags]) => {
+                        const optgroup = document.createElement('optgroup');
+                        optgroup.label = category;
+                        
+                        categoryTags.forEach(tag => {
+                            allTags.push(tag);
+                            const option = document.createElement('option');
+                            option.value = tag;
+                            option.textContent = tag;
+                            optgroup.appendChild(option);
+                        });
+                        
+                        tagSelect.appendChild(optgroup);
+                    });
+                });
+                
+                // 绑定选择文件事件
+                document.getElementById('select-file').addEventListener('click', function() {
+                    document.getElementById('file-input').click();
+                });
+                
+                // 绑定文件上传事件
+                document.getElementById('file-input').addEventListener('change', function(e) {
+                    if (e.target.files.length > 0) {
+                        const file = e.target.files[0];
+                        handleFileUpload(file);
+                    }
+                });
+                
+                // 绑定拖放事件
+                const uploadArea = document.getElementById('upload-area');
+                
+                uploadArea.addEventListener('dragover', function(e) {
+                    e.preventDefault();
+                    uploadArea.classList.add('border-primary');
+                });
+                
+                uploadArea.addEventListener('dragleave', function() {
+                    uploadArea.classList.remove('border-primary');
+                });
+                
+                uploadArea.addEventListener('drop', function(e) {
+                    e.preventDefault();
+                    uploadArea.classList.remove('border-primary');
+                    
+                    if (e.dataTransfer.files.length > 0) {
+                        const file = e.dataTransfer.files[0];
+                        handleFileUpload(file);
+                    }
+                });
+                
+                // 绑定添加标签事件
+                document.getElementById('add-tag').addEventListener('click', function() {
+                    const tagSelect = document.getElementById('case-tags');
+                    const selectedTag = tagSelect.value;
+                    
+                    if (selectedTag && !selectedTags.includes(selectedTag)) {
+                        selectedTags.push(selectedTag);
+                        renderSelectedTags();
+                    }
+                });
+                
+                // 绑定表单提交事件
+                document.getElementById('case-form').addEventListener('submit', async function(e) {
+                    e.preventDefault();
+                    
+                    const caseData = {
+                        title: document.getElementById('case-title').value,
+                        description: document.getElementById('case-description').value,
+                        content: document.getElementById('case-content').value,
+                        tags: selectedTags
+                    };
+                    
+                    const response = await fetchAPI('cases', 'POST', caseData);
+                    
+                    if (response && response.status === 'success') {
+                        alert('案例上传成功');
+                        document.getElementById('case-title').value = '';
+                        document.getElementById('case-description').value = '';
+                        document.getElementById('case-content').value = '';
+                        selectedTags = [];
+                        renderSelectedTags();
+                    }
+                });
+            }
+            
+            // 处理文件上传
+            function handleFileUpload(file) {
+                // 这里简化处理，实际应用中应该解析文件内容
+                document.getElementById('case-title').value = file.name.replace(/\.[^/.]+$/, "");
+                
+                // 读取文件内容
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const content = e.target.result;
+                    document.getElementById('case-content').value = content;
+                };
+                
+                if (file.type === 'application/pdf' || 
+                    file.type === 'application/msword' || 
+                    file.type === 'application/vnd.openxmlformats-officedocument.wordprocessingml.document') {
+                    // PDF 或 Word 文件，这里简化处理
+                    reader.readAsText(file);
+                } else {
+                    // 文本文件
+                    reader.readAsText(file);
+                }
+            }
+            
+            // 渲染已选标签
+            function renderSelectedTags() {
+                const container = document.getElementById('selected-tags');
+                container.innerHTML = '';
+                
+                selectedTags.forEach(tag => {
+                    const tagElement = document.createElement('span');
+                    tagElement.className = 'case-tag';
+                    tagElement.innerHTML = `
+                        ${tag}
+                        <i class="bi bi-x ms-1" style="cursor: pointer;"></i>
+                    `;
+                    
+                    tagElement.querySelector('i').addEventListener('click', function() {
+                        selectedTags = selectedTags.filter(t => t !== tag);
+                        renderSelectedTags();
+                    });
+                    
+                    container.appendChild(tagElement);
+                });
+            }
+            
+            // 初始化聊天页面
+            function initChat() {
+                // 绑定发送消息事件
+                document.getElementById('send-message').addEventListener('click', sendMessage);
+                
+                // 绑定输入框回车事件
+                document.getElementById('chat-input').addEventListener('keypress', function(e) {
+                    if (e.key === 'Enter' && !e.shiftKey) {
+                        e.preventDefault();
+                        sendMessage();
+                    }
+                });
+            }
+            
+            // 发送消息
+            async function sendMessage() {
+                const input = document.getElementById('chat-input');
+                const message = input.value.trim();
+                
+                if (!message) return;
+                
+                // 清空输入框
+                input.value = '';
+                
+                // 添加用户消息
+                addMessage('user', message);
+                
+                // 显示AI正在输入
+                const typingMessage = addMessage('ai', '<div class="typing-indicator"><span></span><span></span><span></span></div>', true);
+                
+                // 发送到API
+                const response = await fetchAPI('chat', 'POST', { message });
+                
+                // 移除正在输入指示器
+                typingMessage.remove();
+                
+                if (response) {
+                    // 添加AI回复
+                    addMessage('ai', response.text);
+                    
+                    // 更新相关案例
+                    updateRelatedCases(response.referenced_cases || []);
+                } else {
+                    // 添加错误消息
+                    addMessage('ai', '抱歉，发生了错误，请稍后再试。');
+                }
+            }
+            
+            // 添加消息
+            function addMessage(type, content, isTyping = false) {
+                const messagesContainer = document.getElementById('chat-messages');
+                const messageElement = document.createElement('div');
+                messageElement.className = `message message-${type}`;
+                
+                const now = new Date();
+                const timeString = `${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}`;
+                
+                messageElement.innerHTML = `
+                    <div class="message-content">
+                        <p>${content}</p>
+                        ${!isTyping ? `<div class="message-time">今天 ${timeString}</div>` : ''}
+                    </div>
+                `;
+                
+                messagesContainer.appendChild(messageElement);
+                messagesContainer.scrollTop = messagesContainer.scrollHeight;
+                
+                if (!isTyping) {
+                    chatMessages.push({
+                        type,
+                        content,
+                        time: now
+                    });
+                }
+                
+                return messageElement;
+            }
+            
+            // 更新相关案例
+            function updateRelatedCases(relatedCases) {
+                const container = document.getElementById('related-cases');
+                
+                if (relatedCases.length === 0) {
+                    container.innerHTML = `
+                        <div class="text-center text-muted py-5">
+                            <i class="bi bi-journal-text fs-1"></i>
+                            <p class="mt-3">未找到相关案例</p>
+                        </div>
+                    `;
+                    return;
+                }
+                
+                container.innerHTML = '';
+                
+                relatedCases.forEach(caseItem => {
+                    const caseElement = document.createElement('div');
+                    caseElement.className = 'case-card';
+                    caseElement.innerHTML = `
+                        <h5>${caseItem.title}</h5>
+                        <p>${caseItem.description}</p>
+                        <div class="case-tags">
+                            ${(caseItem.tags || []).slice(0, 3).map(tag => `
+                                <span class="case-tag">${tag}</span>
+                            `).join('')}
+                            ${caseItem.tags && caseItem.tags.length > 3 ? `
+                                <span class="case-tag more-tag">+${caseItem.tags.length - 3}</span>
+                            ` : ''}
+                        </div>
+                    `;
+                    
+                    caseElement.addEventListener('click', () => {
+                        showCaseDetail(caseItem);
+                    });
+                    
+                    container.appendChild(caseElement);
+                });
+            }
+            
+            // 格式化日期
+            function formatDate(dateString) {
+                if (!dateString) return '';
+                
+                const date = new Date(dateString);
+                return `${date.getFullYear()}-${(date.getMonth() + 1).toString().padStart(2, '0')}-${date.getDate().toString().padStart(2, '0')}`;
+            }
+            
+            // 初始化页面
+            initUploadCase();
+            initChat();
+            loadDashboard();
+        });
+    </script>
+</body>
+</html>

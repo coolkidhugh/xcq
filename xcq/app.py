@@ -310,9 +310,9 @@ def web_search(query, num_results=3):
 # 格式化搜索结果为AI可读格式
 def format_search_results_for_ai(results, query):
     if not results:
-        return f"未能找到关于"{query}"的搜索结果。"
+        return f"未能找到关于\"{query}\"的搜索结果。"
     
-    formatted_text = f"以下是关于"{query}"的网络搜索结果：\n\n"
+    formatted_text = f"以下是关于\"{query}\"的网络搜索结果：\n\n"
     
     for i, result in enumerate(results, 1):
         formatted_text += f"结果{i}：{result['title']}\n"
